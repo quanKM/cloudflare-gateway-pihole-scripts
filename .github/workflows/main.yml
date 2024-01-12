@@ -22,7 +22,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          repository: "mrrfv/cloudflare-gateway-pihole-scripts"
+          ref: "v1"
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -60,12 +61,16 @@ jobs:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           FAST_MODE: ${{ vars.FAST_MODE }}
 
-      - name: Send ping request
-        if: env.PING_URL != ''
+      - name: Generate
         run: |
-          curl "${{ env.PING_URL }}"
-        env:
-          PING_URL: ${{ secrets.PING_URL }}
+          echo "Temp" >> ./temp.txt
 
-      - name: Keep workflow alive
-        uses: gautamkrishnar/keepalive-workflow@v1
+      - name: Keep
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: keep
+          skip_checkout: true
+          skip_dirty_check: true
+          push_options: '--force'
+          file_pattern: ./temp.txt
+          commit_message: Bump
